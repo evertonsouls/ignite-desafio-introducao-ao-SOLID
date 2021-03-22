@@ -1,0 +1,280 @@
+{
+  "openapi" : "3.0.0",
+  "info": {
+    "title": "Atlas",
+    "description": "Essa é uma documentação sobre a Atlas API",
+    "version": "1.0.0",
+    "contact": {
+      "email": "evertonsouls@gmail.com"
+    }
+  },
+  "tags": [
+    {
+      "name": "users",
+      "description": "Gerenciamento de usuários"
+    }
+  ],
+  "paths": {
+    "/users" : {
+      "post": {
+        "tags": ["users"],
+        "summary": "Cria um novo usuários",
+        "requestBody": {
+          "description": "Campos obrigatórios para a criação de um usuário",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"                    
+                  },
+                   "email": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "name": "Rocketseat",
+                  "email": "oi@rocketseat.com.br"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Operação realizada con sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User",
+                  "example": {
+                    "admin": false,
+                    "id": "3964d55c-d97e-45a4-97a7-7580cc7b94eb",
+                    "name": "Rocketseat",
+                    "email": "oi@rocketseat.com.br",
+                    "created_at": "2021-03-21T21:06:30.166Z",
+                    "updated_at": "2021-03-21T21:06:30.166Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Email já está sendo utilizado",
+            "content": {
+              "application/json": {
+                "schema": {                  
+                  "#ref": "#/components/schemas/Error",
+                  "example": {
+                    "error": "This email is alread in use."
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["users"],
+        "summary": "Retorna todos os usuários",
+        "description": "Somente usuários admin pode acessar",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "header",
+            "required": true,            
+            "schema":{        
+              "type": "string",
+              "format": "uuid"          
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Operação realizada con sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  },
+                  "example": [
+                    {
+                      "admin": false,
+                      "id": "3964d55c-d97e-45a4-97a7-7580cc7b94eb",
+                      "name": "Rocketseat",
+                      "email": "oi@rocketseat.com.br",
+                      "created_at": "2021-03-21T21:06:30.166Z",
+                      "updated_at": "2021-03-21T21:06:30.166Z"
+                    },
+                    {
+                      "admin": true,
+                      "id": "3964d56c-d97e-45a4-97a7-7580cc7b94eb",
+                      "name": "Rocketseat2",
+                      "email": "oi2@rocketseat.com.br",
+                      "created_at": "2021-03-21T21:06:30.166Z",
+                      "updated_at": "2021-03-21T21:06:30.166Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Usuário sem permissão pou Usuários não encotrado",
+            "content": {
+              "application/json": {
+                "schema": {                  
+                  "#ref": "#/components/schemas/Error",
+                  "example": {
+                    "error": "You need to be an administrator to list all users."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{user_id}": {      
+      "get": {
+        "tags": ["users"],
+        "summary": "Retorna um usuário especifico",        
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "description": "ID do usuario",
+            "schema":{        
+              "type": "string",
+              "format": "uuid"          
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Operação realizada con sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User",                  
+                  "example": {
+                    "admin": false,
+                    "id": "3964d55c-d97e-45a4-97a7-7580cc7b94eb",
+                    "name": "Rocketseat",
+                    "email": "oi@rocketseat.com.br",
+                    "created_at": "2021-03-21T21:06:30.166Z",
+                    "updated_at": "2021-03-21T21:06:30.166Z"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encotrado",
+            "content": {
+              "application/json": {
+                "schema": {                  
+                  "#ref": "#/components/schemas/Error",
+                  "example": {
+                    "error": "User not found."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{user_id}/admin": {
+      "patch": {
+        "tags": ["users"],
+        "summary": "Torna admin um usuário",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "description": "ID do usuario",
+            "schema":{        
+              "type": "string",
+              "format": "uuid"          
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Operação realizada con sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User",                  
+                  "example": {
+                    "admin": true,
+                    "id": "3964d55c-d97e-45a4-97a7-7580cc7b94eb",
+                    "name": "Rocketseat",
+                    "email": "oi@rocketseat.com.br",
+                    "created_at": "2021-03-21T21:06:30.166Z",
+                    "updated_at": "2021-03-21T21:06:30.166Z"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encotrado",
+            "content": {
+              "application/json": {
+                "schema": {                  
+                  "#ref": "#/components/schemas/Error",
+                  "example": {
+                    "error": "User not found."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {                    
+          "error": {
+            "type": "string"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "admin": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "datetime"
+          },
+          "updated_at": {
+            "type": "datetime"
+          }
+        }
+      }
+    }
+  }
+}
